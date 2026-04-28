@@ -1,20 +1,16 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import SimpleRouter, DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.views import PostListCreateAPIView, CommentListAPIView, \
-    PostRetrieveAPIView, AlbumListAPIView, PhotoListAPIView, PostRetrieveUpdateDestroyAPIView, PostCommentListAPIView, \
-    UserListCreateAPIView, UserRetrieveAPIView, BookListCreateAPIView, BookRetrieveUpdateDestroyAPIView, \
-    StudentListCreateAPIView
+from apps.serializers import PostModelSerializer
+from apps.views import CustomTokenObtainPairView, PostModelViewSet
 
+router = SimpleRouter(trailing_slash=False)
+router.register('posts', PostModelViewSet)
 urlpatterns = [
-    path('students/', StudentListCreateAPIView.as_view()),
-    path('books/', BookListCreateAPIView.as_view()),
-    path('books/<int:pk>/', BookRetrieveUpdateDestroyAPIView.as_view()),
-    path('users/', UserListCreateAPIView.as_view()),
-    path('users/<str:username>', UserRetrieveAPIView.as_view()),
-    path('posts/', PostListCreateAPIView.as_view()),
-    # path('posts/<int:pk>/', PostRetrieveAPIView.as_view()),
-    path('posts/<int:pk>/', PostRetrieveUpdateDestroyAPIView.as_view()),
-    path('posts/<int:pk>/comments', PostCommentListAPIView.as_view()),
-    path("comments/", CommentListAPIView.as_view()),
-    path("albums", AlbumListAPIView.as_view()),
+    path('', include(router.urls)),
+    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('posts', PostListCreateAPIView.as_view(), name='posts'),
+
 ]
